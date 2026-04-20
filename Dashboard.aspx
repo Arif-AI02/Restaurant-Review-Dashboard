@@ -1,5 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs"
-         Inherits="Review_Restaurant.Dashboard" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="Review_Restaurant.Dashboard" %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
@@ -38,8 +37,13 @@
         .panel h2 { color: #5c2d91; margin-top: 0; }
         .review-card { border-bottom: 1px solid #eee; padding: 12px 0; }
         .review-card:last-child { border-bottom: none; }
-        .rating { color: #5c2d91; font-weight: bold; }
+        .stars { color: #f5a623; }
         .meta { color: #888; font-size: 12px; }
+        .no-reviews {
+            padding: 20px;
+            text-align: center;
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -76,22 +80,34 @@
             </asp:TemplateField>
             <asp:BoundField DataField="WeightedRating" HeaderText="Weighted Avg Rating" />
         </Columns>
+        <EmptyDataTemplate>
+            <div style="padding: 20px; text-align: center;">
+                No restaurants found matching the selected criteria.
+            </div>
+        </EmptyDataTemplate>
     </asp:GridView>
     
     <asp:Panel ID="pnlReviews" runat="server" Visible="false" CssClass="panel">
         <h2>Reviews for: <asp:Label ID="lblRestaurantName" runat="server" /></h2>
+        
         <asp:Repeater ID="rptReviews" runat="server">
             <ItemTemplate>
                 <div class="review-card">
                     <b><%# Eval("ReviewerName") %></b>
                     <span class="meta"> — <%# Eval("Date", "{0:dd MMM yyyy}") %></span>
-                    <div class="rating">
-                        Rating: <%# Eval("Rating") %> / 5
+                    <div class="stars">
+                        <%# GetStars((int)Eval("Rating")) %>
+                        (<%# Eval("Rating") %>/5)
                     </div>
                     <div><%# Eval("ReviewText") %></div>
                 </div>
             </ItemTemplate>
         </asp:Repeater>
+        
+        <!-- Show message when no reviews exist -->
+        <div id="divNoReviews" runat="server" class="no-reviews" visible="false">
+            No reviews available for this restaurant.
+        </div>
     </asp:Panel>
 </form>
 </body>

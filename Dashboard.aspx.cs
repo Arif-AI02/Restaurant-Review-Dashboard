@@ -24,6 +24,27 @@ namespace Review_Restaurant
 
     public partial class Dashboard : System.Web.UI.Page
     {
+        // Helper method to display star symbols (★ and ☆) based on rating
+        // This method is called from the ASPX markup, so it must be public static
+        public static string GetStars(int rating)
+        {
+            string stars = "";
+
+            // Add filled stars (★)
+            for (int i = 0; i < rating; i++)
+            {
+                stars = stars + "★";
+            }
+
+            // Add empty stars (☆)
+            for (int i = rating; i < 5; i++)
+            {
+                stars = stars + "☆";
+            }
+
+            return stars;
+        }
+
         // Returns a fixed list of all reviews
         // In a real app this would come from a database
         private List<Review> GetAllReviews()
@@ -434,10 +455,10 @@ namespace Review_Restaurant
             BindGrid(minimumRating);
         }
 
-        // Fires when the user clicks "View Reviews" on any restaurant row
+        // Fires when the user clicks on a restaurant name
         protected void gvRestaurants_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
         {
-            // Only handle the "ViewReviews" button, ignore everything else
+            // Only handle the "ViewReviews" command, ignore everything else
             if (e.CommandName != "ViewReviews")
             {
                 return;
@@ -463,8 +484,12 @@ namespace Review_Restaurant
 
             // Show the reviews panel with that restaurant's reviews
             lblRestaurantName.Text = selectedSummary.RestaurantName;
+
+            // Bind the reviews to the repeater
             rptReviews.DataSource = selectedSummary.Reviews;
             rptReviews.DataBind();
+
+            // Show the panel
             pnlReviews.Visible = true;
         }
     }
